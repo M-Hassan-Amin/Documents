@@ -1,0 +1,10 @@
+#------------------------------------------------------------------------------------------------------------
+#Email Validation
+regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$' 
+def check(mail):   
+  
+    if(re.search(regex,mail)):
+        print("Valid Email")   
+        return True   
+    else:   
+        return False

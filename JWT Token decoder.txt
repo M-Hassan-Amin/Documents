@@ -1,0 +1,19 @@
+# JWT Token decoder
+
+def admittoken(token):
+    print (token)
+    if savetoken.objects.filter(access_token = token).first():
+        
+        try:
+            my_token=jwt.decode(token,config('key'),algorithms=['HS256'])
+            if savetoken.objects.filter(account_id = my_token['id']).first():
+                print("my_token", my_token)
+                return my_token
+
+        except jwt.ExpiredSignatureError:
+            return False
+
+        except:
+            return False
+    else:
+        return False

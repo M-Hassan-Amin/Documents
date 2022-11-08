@@ -1,0 +1,9 @@
+#Get linked data with two Models.
+
+class link(APIView):
+    def get(self,request):
+        data_room = room.objects.values()
+        for i in range(len(data_room)):
+            data = student.objects.filter(room_id__id = data_room[i]['id']).values()
+            data_room[i]['students'] = data
+        return Response({'status': True, 'data': data_room})
