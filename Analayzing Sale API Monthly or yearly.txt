@@ -1,0 +1,13 @@
+#--------------------------------------------------------------------------------------------------------------------
+#Analayzing Sale API Monthly or yearly
+
+class reservations(APIView):
+    def get(self,request):
+        result = Reservation.objects.values('Date__month', 'Date__year').annotate(sale=Sum('Amount')).order_by('Date__year')
+        yearly = Reservation.objects.values('Date__year').annotate(sale=Sum('Amount')).order_by()
+        initial=0
+        for i in result:
+            Month = calendar.month_name[result[initial]['Date__month']]
+            result[initial]["Date__month"] = Month 
+            initial+=1
+        return Response({'status': True, 'Monthly': result, 'Yearly':yearly})
