@@ -1,0 +1,45 @@
+#Uplod CSV File
+fs = FileSystemStorage(location='tmp/')
+# Serializer
+class ProductSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Reservation
+        fields = "__all__"
+
+class excsv(APIView):
+    def post(self,request):
+        # ""Upload data from CSV"""
+        file = request.FILES["file"]
+        content = file.read()  # these are bytes
+        file_content = ContentFile(content)
+        file_name = fs.save("_tmp.csv", file_content)
+        tmp_file = fs.path(file_name)
+        csv_file = open(tmp_file, errors="ignore")
+        reader = csv.reader(csv_file)
+        next(reader)
+        print("content = ", content, "file = ",file_content, "name =", file_name, "temp =", tmp_file, "cs = ", csv_file, "rea = ", reader)
+
+        reservation_list = []
+        for i, row in enumerate(reader):
+            (
+                Name,
+                Amount,
+                # Date,
+
+            ) = row
+            if row:
+                check = Reservation.objects.filter(Name = Name, Amount = Amount).exists()
+                if check:
+                    return Response({'status': True, 'Notification': 'exist', 'data' : check})
+
+            reservation_list.append(
+                Reservation(
+                    Name = Name,
+                    Amount = Amount,
+                    # Date = Date,
+                )
+            )
+
+        Reservation.objects.bulk_create(reservation_list)
+        return Response({'status': True, 'Notification': 'Upload Successfully'})
